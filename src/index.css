@@ -193,9 +193,10 @@ ul {
 
 
 .bg-hero {
-  background-image: url('https://images.unsplash.com/photo-1544965838-54ef8406f868?q=80&w=1920&auto=format&fit=crop');
+  background-image: url('/hero-bg.jpg'); /* Caminho direto para a imagem na pasta public */
 }
 
+/* As outras podem continuar como estão ou você pode adicionar suas próprias imagens depois */
 .bg-about {
   background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1920');
 }
