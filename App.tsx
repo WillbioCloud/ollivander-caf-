@@ -15,13 +15,12 @@ import {
 import { CATEGORIES, MENU_ITEMS } from './constants';
 import { Category, MenuItem } from './types';
 
-// --- Sub-components defined here for single-file adherence, 
-// usually would be in components/ folder ---
+// --- Componentes visuais ---
 
-// Particle Effect Component
+// Efeito de Partículas Mágicas (Mantido para atmosfera)
 const MagicParticles = () => {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
       {[...Array(20)].map((_, i) => (
         <div
           key={i}
@@ -40,7 +39,7 @@ const MagicParticles = () => {
   );
 };
 
-// Menu Card Component
+// Componente Card do Menu
 const MenuCard: React.FC<{ item: MenuItem; onClick: () => void }> = ({ item, onClick }) => {
   return (
     <div 
@@ -49,19 +48,19 @@ const MenuCard: React.FC<{ item: MenuItem; onClick: () => void }> = ({ item, onC
         relative group cursor-pointer 
         bg-wizard-parchment text-wizard-dark 
         p-6 rounded-lg shadow-lg border-2 
-        transition-all duration-300 hover:-translate-y-2
+        transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)]
         ${item.highlight ? 'border-wizard-gold ring-2 ring-wizard-gold/30' : 'border-transparent'}
         bg-texture-paper bg-cover
       `}
     >
       {item.highlight && (
-        <div className="absolute -top-3 -right-3 bg-wizard-gold text-wizard-dark rounded-full p-2 shadow-md animate-pulse-slow">
+        <div className="absolute -top-3 -right-3 bg-wizard-gold text-wizard-dark rounded-full p-2 shadow-md animate-pulse-slow z-20">
           <Star size={16} fill="currentColor" />
         </div>
       )}
       
       <div className="flex justify-between items-start mb-2 border-b border-wizard-brown/20 pb-2">
-        <h3 className="font-magic font-bold text-lg md:text-xl leading-tight text-wizard-brown">
+        <h3 className="font-magic font-bold text-lg md:text-xl leading-tight text-wizard-brown group-hover:text-wizard-gold transition-colors">
           {item.name}
         </h3>
         <span className="font-bold text-wizard-green text-lg whitespace-nowrap ml-4">
@@ -75,20 +74,20 @@ const MenuCard: React.FC<{ item: MenuItem; onClick: () => void }> = ({ item, onC
         </p>
       )}
 
-      {/* Magical Hover Effect Overlay */}
+      {/* Efeito Mágico Hover Overlay */}
       <div className="absolute inset-0 bg-wizard-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" />
     </div>
   );
 };
 
-// Modal Component for details
+// Modal de Detalhes
 const ItemModal: React.FC<{ item: MenuItem | null; onClose: () => void }> = ({ item, onClose }) => {
   if (!item) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose}>
       <div 
-        className="relative bg-wizard-parchment max-w-md w-full rounded-xl p-8 shadow-2xl border-4 border-wizard-gold bg-texture-paper overflow-y-auto max-h-[90vh]"
+        className="relative bg-wizard-parchment max-w-md w-full rounded-xl p-8 shadow-2xl border-4 border-wizard-gold bg-texture-paper overflow-y-auto max-h-[90vh] scale-100 animate-in zoom-in-95 duration-300"
         onClick={e => e.stopPropagation()}
       >
         <button 
@@ -99,11 +98,11 @@ const ItemModal: React.FC<{ item: MenuItem | null; onClose: () => void }> = ({ i
         </button>
 
         <div className="text-center mb-6">
-           <div className="inline-block p-3 rounded-full bg-wizard-green/10 mb-4">
+           <div className="inline-block p-3 rounded-full bg-wizard-green/10 mb-4 shadow-inner">
             <Sparkles className="text-wizard-green" size={32} />
            </div>
            <h2 className="font-magic text-2xl font-bold text-wizard-brown mb-2">{item.name}</h2>
-           <span className="inline-block bg-wizard-green text-wizard-gold px-4 py-1 rounded-full font-bold">
+           <span className="inline-block bg-wizard-green text-wizard-gold px-4 py-1 rounded-full font-bold shadow-sm">
              R$ {item.price.toFixed(2).replace('.', ',')}
            </span>
         </div>
@@ -114,7 +113,7 @@ const ItemModal: React.FC<{ item: MenuItem | null; onClose: () => void }> = ({ i
           </p>
         )}
 
-        {/* Magical Ingredients Section */}
+        {/* Ingredientes Mágicos */}
         {item.magicalIngredients && (
           <div className="mb-8 border-t border-wizard-gold/30 pt-6 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-wizard-parchment px-4 text-wizard-gold">
@@ -159,7 +158,7 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Handle scroll for sticky nav styling
+  // Controle de scroll para a navbar
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -170,166 +169,225 @@ export default function App() {
 
   const filteredItems = MENU_ITEMS.filter(item => item.category === activeCategory);
   
-  // Featured items logic
-  const featuredDrinks = MENU_ITEMS.filter(item => 
-    item.category === 'Drinks Mágicos' && item.highlight
+  // Destaques (Drinks Mágicos e Sobremesas Especiais)
+  const featuredItems = MENU_ITEMS.filter(item => 
+    item.highlight === true
   );
 
   return (
     <div className="min-h-screen bg-wizard-deep font-body text-wizard-parchment overflow-x-hidden">
-      {/* Background Magic */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-wizard-green/20 via-wizard-deep to-black -z-20"></div>
       
       {/* Navigation */}
       <nav 
         className={`fixed w-full z-40 transition-all duration-300 ${
-          scrolled ? 'bg-wizard-deep/95 backdrop-blur-md shadow-lg py-2' : 'bg-transparent py-4'
+          scrolled ? 'bg-wizard-deep/95 backdrop-blur-md shadow-lg py-2 border-b border-wizard-gold/20' : 'bg-gradient-to-b from-black/80 to-transparent py-6'
         }`}
       >
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Sparkles className="text-wizard-gold animate-pulse-slow" />
-            <span className="font-magic text-xl md:text-2xl text-wizard-gold font-bold tracking-wider">
+          <div className="flex items-center gap-2 group cursor-pointer">
+            <div className="p-2 border border-wizard-gold rounded-full group-hover:rotate-180 transition-transform duration-700">
+               <Sparkles className="text-wizard-gold" size={20} />
+            </div>
+            <span className="font-magic text-xl md:text-2xl text-wizard-gold font-bold tracking-wider group-hover:text-white transition-colors">
               Ollivander Café
             </span>
           </div>
           
-          <div className="hidden md:flex gap-8 font-magic text-sm tracking-widest text-wizard-parchment/80">
-            <a href="#hero" className="hover:text-wizard-gold transition-colors">Início</a>
-            <a href="#sobre" className="hover:text-wizard-gold transition-colors">Sobre</a>
-            <a href="#menu" className="hover:text-wizard-gold transition-colors">Cardápio</a>
-            <a href="#contact" className="hover:text-wizard-gold transition-colors">Contato</a>
+          <div className="hidden md:flex gap-8 font-magic text-sm tracking-widest text-wizard-parchment/80 uppercase">
+            <a href="#hero" className="hover:text-wizard-gold hover:underline decoration-wizard-gold underline-offset-4 transition-all">Início</a>
+            <a href="#sobre" className="hover:text-wizard-gold hover:underline decoration-wizard-gold underline-offset-4 transition-all">Sobre</a>
+            <a href="#destaques" className="hover:text-wizard-gold hover:underline decoration-wizard-gold underline-offset-4 transition-all">Destaques</a>
+            <a href="#menu" className="hover:text-wizard-gold hover:underline decoration-wizard-gold underline-offset-4 transition-all">Cardápio</a>
           </div>
 
-          <button className="md:hidden text-wizard-gold" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button className="md:hidden text-wizard-gold hover:text-white transition-colors" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full bg-wizard-deep border-b border-wizard-gold/20 p-4 flex flex-col gap-4 text-center font-magic shadow-xl">
-             <a href="#hero" onClick={() => setIsMenuOpen(false)}>Início</a>
-             <a href="#sobre" onClick={() => setIsMenuOpen(false)}>Sobre</a>
-             <a href="#menu" onClick={() => setIsMenuOpen(false)}>Cardápio</a>
-             <a href="#contact" onClick={() => setIsMenuOpen(false)}>Contato</a>
+          <div className="md:hidden absolute top-full left-0 w-full bg-wizard-deep border-b border-wizard-gold/20 p-6 flex flex-col gap-6 text-center font-magic shadow-xl bg-[url('https://www.transparenttextures.com/patterns/aged-paper.png')]">
+             <a href="#hero" onClick={() => setIsMenuOpen(false)} className="text-wizard-gold text-lg">Início</a>
+             <a href="#sobre" onClick={() => setIsMenuOpen(false)} className="text-wizard-parchment hover:text-wizard-gold">Sobre</a>
+             <a href="#destaques" onClick={() => setIsMenuOpen(false)} className="text-wizard-parchment hover:text-wizard-gold">Destaques</a>
+             <a href="#menu" onClick={() => setIsMenuOpen(false)} className="text-wizard-parchment hover:text-wizard-gold">Cardápio</a>
           </div>
         )}
       </nav>
 
-      {/* Hero Section */}
-      <section id="hero" className="relative min-h-screen flex items-center justify-center pt-16">
+      {/* --- HERO SECTION COM PARALLAX --- */}
+      {/* Usamos bg-fixed para o efeito parallax CSS puro */}
+      <section 
+        id="hero" 
+        className="relative min-h-screen flex items-center justify-center pt-16 bg-fixed bg-center bg-cover"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1544965838-54ef8406f868?q=80&w=1920&auto=format&fit=crop')" // Imagem de biblioteca antiga/mágica
+        }}
+      >
+        {/* Overlay Escuro para leitura */}
+        <div className="absolute inset-0 bg-black/50 z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-wizard-deep via-transparent to-black/30 z-0"></div>
+        
         <MagicParticles />
+
         <div className="container mx-auto px-4 text-center z-10 relative">
           <div className="inline-block animate-float mb-6">
-            <img 
-              src="https://picsum.photos/150/150?grayscale&blur=2" 
-              alt="Logo Placeholder" 
-              className="w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-wizard-gold shadow-[0_0_30px_rgba(212,175,55,0.3)] mx-auto object-cover opacity-80"
-              style={{ display: 'none' }} // Hiding placeholder image to rely on typography and icons
-            />
-            <Scroll size={80} className="text-wizard-gold mx-auto mb-4 opacity-90" strokeWidth={1} />
+            <Scroll size={80} className="text-wizard-gold mx-auto mb-4 opacity-90 drop-shadow-[0_0_10px_rgba(212,175,55,0.5)]" strokeWidth={1} />
           </div>
           
-          <h1 className="font-magic text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-wizard-gold to-yellow-700 drop-shadow-lg mb-4">
+          <h1 className="font-magic text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-wizard-gold to-yellow-800 drop-shadow-2xl mb-4 tracking-tight">
             Ollivander Café
           </h1>
           
-          <p className="font-body italic text-xl md:text-2xl text-wizard-parchment/90 mb-10 max-w-2xl mx-auto">
+          <p className="font-body italic text-xl md:text-2xl text-wizard-parchment/90 mb-10 max-w-2xl mx-auto drop-shadow-md border-t border-b border-wizard-gold/30 py-4">
             “Onde cada sabor escolhe você”
           </p>
           
-          <div className="flex flex-col md:flex-row justify-center gap-4">
+          <div className="flex flex-col md:flex-row justify-center gap-6">
             <a 
               href="#menu"
-              className="px-8 py-4 bg-wizard-gold text-wizard-deep font-magic font-bold text-lg rounded hover:bg-wizard-goldlight transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)]"
+              className="px-10 py-4 bg-wizard-gold/90 backdrop-blur-sm text-wizard-deep font-magic font-bold text-lg rounded border border-wizard-gold hover:bg-wizard-gold hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)]"
             >
               Ver Cardápio
             </a>
-            <button 
-              className="px-8 py-4 border border-wizard-gold text-wizard-gold font-magic font-bold text-lg rounded hover:bg-wizard-gold/10 transition-all opacity-50 cursor-not-allowed"
-              title="Em breve"
-            >
-              Fazer Pedido
-            </button>
           </div>
         </div>
         
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-wizard-gold/50">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-wizard-gold/70">
           <div className="w-6 h-10 border-2 border-current rounded-full flex justify-center pt-2">
             <div className="w-1 h-2 bg-current rounded-full" />
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="sobre" className="py-20 bg-wizard-dark relative overflow-hidden">
-        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-          <div className="relative">
-            <div className="absolute -inset-4 bg-wizard-gold/20 rounded-lg blur-lg transform -rotate-2"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800" 
-              alt="Café Interior" 
-              className="relative rounded-lg shadow-2xl border border-wizard-gold/30 grayscale hover:grayscale-0 transition-all duration-700"
-            />
-          </div>
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-px w-12 bg-wizard-gold"></div>
-              <span className="font-magic text-wizard-gold tracking-widest uppercase">Nossa História</span>
+      {/* --- SOBRE NÓS COM PARALLAX --- */}
+      <section 
+        id="sobre" 
+        className="py-24 relative bg-fixed bg-center bg-cover"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1920')" // Imagem de cafeteria rústica
+        }}
+      >
+        {/* Overlay pesado para destacar o texto sobre a imagem parallax */}
+        <div className="absolute inset-0 bg-wizard-dark/90 z-0"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            
+            {/* Coluna Imagem (Polaroid style) */}
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-wizard-gold/30 rounded-sm blur-xl transform -rotate-2 group-hover:rotate-0 transition-all duration-700 opacity-60"></div>
+              <img 
+                src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=800&auto=format&fit=crop" 
+                alt="Detalhe do Café" 
+                className="relative rounded-sm shadow-2xl border-4 border-wizard-parchment sepia-[0.3] group-hover:sepia-0 transition-all duration-700 transform rotate-2 group-hover:rotate-0"
+              />
             </div>
-            <h2 className="font-magic text-4xl font-bold text-wizard-parchment">
-              Magia em cada detalhe
-            </h2>
-            <p className="text-lg leading-relaxed text-wizard-parchment/80">
-              Inspirado nas lendas e encantos do mundo bruxo, o <span className="text-wizard-gold font-bold">Ollivander Café</span> não é apenas uma lanchonete, é um portal.
-              Aqui, as receitas são poções cuidadosamente preparadas para despertar memórias e criar novos momentos mágicos.
-            </p>
-            <p className="text-lg leading-relaxed text-wizard-parchment/80">
-              Do aroma envolvente do nosso Café na Prensa Francesa ao brilho misterioso da Cerveja Amanteigada, 
-              cada item do nosso cardápio foi escolhido para encantar seu paladar.
-            </p>
-            <div className="pt-4 flex items-center gap-4 text-wizard-gold">
-              <Coffee size={28} />
-              <span className="font-magic text-sm">Cafés Especiais</span>
-              <span className="w-1 h-1 bg-wizard-gold rounded-full"></span>
-              <Sparkles size={28} />
-              <span className="font-magic text-sm">Ambiente Imersivo</span>
+
+            {/* Coluna Texto */}
+            <div className="space-y-8 text-wizard-parchment">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-px w-16 bg-wizard-gold"></div>
+                  <span className="font-magic text-wizard-gold tracking-[0.2em] uppercase text-sm">Nossa História</span>
+                </div>
+                <h2 className="font-magic text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                  Magia em cada <span className="text-wizard-gold">detalhe</span>
+                </h2>
+              </div>
+              
+              <div className="space-y-4 font-body text-lg leading-relaxed text-gray-300">
+                <p>
+                  Inspirado nas lendas e encantos do mundo bruxo, o <strong className="text-wizard-gold font-normal">Ollivander Café</strong> não é apenas uma lanchonete, é um portal.
+                  Aqui, as receitas são poções cuidadosamente preparadas para despertar memórias e criar novos momentos mágicos.
+                </p>
+                <p>
+                  Do aroma envolvente do nosso Café na Prensa Francesa ao brilho misterioso da Cerveja Amanteigada, 
+                  cada item do nosso cardápio foi escolhido para encantar seu paladar.
+                </p>
+              </div>
+
+              <div className="pt-6 border-t border-white/10 flex flex-wrap gap-8">
+                <div className="flex items-center gap-3 text-wizard-gold">
+                  <div className="p-2 border border-wizard-gold/30 rounded-full">
+                    <Coffee size={24} />
+                  </div>
+                  <span className="font-magic text-sm tracking-wider">Cafés Especiais</span>
+                </div>
+                <div className="flex items-center gap-3 text-wizard-gold">
+                  <div className="p-2 border border-wizard-gold/30 rounded-full">
+                    <Sparkles size={24} />
+                  </div>
+                  <span className="font-magic text-sm tracking-wider">Ambiente Imersivo</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Drinks (Potions) */}
-      <section className="py-20 bg-gradient-to-b from-wizard-dark to-wizard-deep relative">
-        <div className="container mx-auto px-4">
+      {/* --- DESTAQUES COM PARALLAX --- */}
+      <section 
+        id="destaques" 
+        className="py-24 relative bg-fixed bg-center bg-cover"
+        style={{
+           backgroundImage: "url('https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=1920&auto=format&fit=crop')" // Imagem mística/livros/poções
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-wizard-deep/95 via-wizard-deep/80 to-wizard-parchment z-0"></div>
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="font-magic text-4xl md:text-5xl text-wizard-gold mb-4">Poções & Elixires</h2>
-            <p className="text-wizard-parchment/70 italic">As especialidades da casa que você precisa provar</p>
+            <div className="inline-block mb-2">
+              <FlaskConical className="text-wizard-gold mx-auto animate-pulse" size={40} />
+            </div>
+            <h2 className="font-magic text-4xl md:text-6xl text-wizard-gold mb-4 drop-shadow-lg">
+              Poções & Elixires
+            </h2>
+            <p className="text-wizard-parchment/70 italic text-xl font-body max-w-xl mx-auto">
+              As especialidades da casa que você precisa provar antes que o feitiço acabe
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredDrinks.map((drink) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredItems.slice(0, 4).map((item) => (
               <div 
-                key={drink.id}
-                onClick={() => setSelectedItem(drink)}
-                className="group relative bg-wizard-dark/50 border border-wizard-gold/30 rounded-xl overflow-hidden hover:border-wizard-gold transition-all duration-500 cursor-pointer"
+                key={item.id}
+                onClick={() => setSelectedItem(item)}
+                className="group relative bg-black/40 backdrop-blur-sm border border-wizard-gold/30 rounded-xl overflow-hidden hover:border-wizard-gold hover:bg-black/60 transition-all duration-500 cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(212,175,55,0.2)] hover:-translate-y-2"
               >
-                <div className="aspect-square relative overflow-hidden bg-black/40 flex items-center justify-center">
-                  <div className={`absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10`} />
-                  {/* Decorative Icon as placeholder for drink image */}
-                  <div className="relative z-0 transform group-hover:scale-110 transition-transform duration-700">
-                    <div className="w-32 h-32 rounded-full bg-wizard-gold/10 blur-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
-                    <img 
-                       src={`https://picsum.photos/400/400?random=${drink.id}`} // Using generic distinct placeholders
-                       className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity"
-                       alt={drink.name}
-                    />
+                {/* Imagem Placeholder Decorativa */}
+                <div className="h-48 relative overflow-hidden flex items-center justify-center bg-wizard-dark/50">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-wizard-gold/20 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                  
+                  {/* Ícone representando o item se não houver imagem real */}
+                  <div className="transform group-hover:scale-125 transition-transform duration-700 text-wizard-gold/80">
+                    <Sparkles size={64} strokeWidth={1} />
                   </div>
-                  <div className="absolute bottom-4 left-4 z-20">
-                    <h3 className="font-magic text-xl text-wizard-gold mb-1">{drink.name}</h3>
-                    <p className="text-sm text-wizard-parchment/80 line-clamp-2">{drink.description}</p>
+                  
+                  {/* Etiqueta de Destaque */}
+                  <div className="absolute top-3 right-3 bg-wizard-gold text-wizard-deep text-xs font-bold px-2 py-1 rounded font-magic shadow-sm">
+                    Recomendado
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <h3 className="font-magic text-xl text-wizard-parchment mb-2 group-hover:text-wizard-gold transition-colors truncate">
+                    {item.name}
+                  </h3>
+                  <div className="w-12 h-px bg-wizard-gold/50 mb-3 group-hover:w-full transition-all duration-500"></div>
+                  <p className="text-sm text-wizard-parchment/60 line-clamp-2 font-body italic mb-4 h-10">
+                    {item.description}
+                  </p>
+                  <div className="flex justify-between items-center text-sm font-bold">
+                    <span className="text-wizard-green bg-wizard-green/10 px-3 py-1 rounded-full border border-wizard-green/20">
+                      R$ {item.price.toFixed(2).replace('.', ',')}
+                    </span>
+                    <span className="text-wizard-gold text-xs uppercase tracking-widest group-hover:underline">
+                      Ver detalhes
+                    </span>
                   </div>
                 </div>
               </div>
@@ -338,31 +396,34 @@ export default function App() {
         </div>
       </section>
 
-      {/* Full Menu Section */}
-      <section id="menu" className="py-24 bg-wizard-parchment bg-texture-paper text-wizard-dark relative">
-        {/* Top/Bottom ragged edge effect via CSS could be added here, using simple borders for now */}
-        <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-wizard-deep to-transparent opacity-80"></div>
+      {/* --- MENU COMPLETO --- */}
+      <section id="menu" className="py-24 bg-wizard-parchment bg-texture-paper text-wizard-dark relative shadow-inner">
+        {/* Borda rasgada (efeito visual simples com CSS gradient) */}
+        <div className="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-wizard-deep to-transparent opacity-40 pointer-events-none"></div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-12">
-            <Scroll className="mx-auto text-wizard-green mb-4" size={48} />
-            <h2 className="font-magic text-5xl font-bold text-wizard-green mb-4">Cardápio Oficial</h2>
-            <p className="font-body italic text-wizard-brown">Escolha sua categoria e descubra a magia</p>
+          <div className="text-center mb-16">
+            <h2 className="font-magic text-5xl font-bold text-wizard-green mb-4 drop-shadow-sm">Cardápio Oficial</h2>
+            <div className="flex items-center justify-center gap-4 text-wizard-brown/60">
+              <span className="h-px w-12 bg-current"></span>
+              <Scroll size={24} />
+              <span className="h-px w-12 bg-current"></span>
+            </div>
           </div>
 
-          {/* Category Navigation - Sticky under main nav */}
-          <div className="sticky top-20 z-30 bg-wizard-parchment/95 backdrop-blur-sm py-4 mb-8 border-y-2 border-wizard-gold/20 shadow-md -mx-4 px-4 md:mx-0 md:rounded-lg">
-            <div className="flex overflow-x-auto gap-2 pb-2 md:pb-0 hide-scrollbar md:flex-wrap md:justify-center">
+          {/* Category Navigation - Sticky */}
+          <div className="sticky top-20 z-30 bg-wizard-parchment/95 backdrop-blur-md py-4 mb-10 border-y border-wizard-gold/30 shadow-md -mx-4 px-4 md:mx-0 md:rounded-lg">
+            <div className="flex overflow-x-auto gap-3 pb-2 md:pb-0 hide-scrollbar md:flex-wrap md:justify-center">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
                   className={`
-                    whitespace-nowrap px-6 py-2 rounded-full font-magic font-bold text-sm transition-all duration-300
-                    border border-wizard-gold/50
+                    whitespace-nowrap px-6 py-2 rounded-full font-magic font-bold text-xs md:text-sm transition-all duration-300
+                    border
                     ${activeCategory === cat.id 
-                      ? 'bg-wizard-green text-wizard-gold shadow-lg scale-105' 
-                      : 'bg-transparent text-wizard-brown hover:bg-wizard-brown/10'}
+                      ? 'bg-wizard-green text-wizard-gold border-wizard-gold shadow-md scale-105' 
+                      : 'bg-transparent text-wizard-brown border-wizard-brown/30 hover:bg-wizard-brown/10 hover:border-wizard-brown'}
                   `}
                 >
                   {cat.label}
@@ -372,7 +433,7 @@ export default function App() {
           </div>
 
           {/* Menu Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
             {filteredItems.map((item) => (
               <MenuCard 
                 key={item.id} 
@@ -383,52 +444,54 @@ export default function App() {
           </div>
           
           {filteredItems.length === 0 && (
-            <div className="text-center py-20 text-wizard-brown/50 italic">
-              Ainda não há itens nesta categoria. A magia está sendo preparada.
+            <div className="text-center py-32 text-wizard-brown/50 italic flex flex-col items-center">
+              <FlaskConical size={48} className="mb-4 opacity-50" />
+              <p className="text-xl">Ainda não há itens nesta categoria.</p>
+              <p className="text-sm mt-2">Os elfos domésticos estão trabalhando nisso.</p>
             </div>
           )}
         </div>
         
-        <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-wizard-deep to-transparent opacity-90 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-wizard-deep to-transparent opacity-90 pointer-events-none"></div>
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="bg-wizard-deep text-wizard-parchment pt-20 pb-10 border-t-4 border-wizard-gold">
-        <div className="container mx-auto px-4">
+      <footer id="contact" className="bg-wizard-deep text-wizard-parchment pt-20 pb-10 border-t-4 border-wizard-gold relative bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid md:grid-cols-3 gap-12 text-center md:text-left">
             
             {/* Brand */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               <h3 className="font-magic text-3xl text-wizard-gold">Ollivander Café</h3>
-              <p className="text-wizard-parchment/60 text-sm">
-                Uma experiência gastronômica única, trazendo o encanto do mundo bruxo para o seu dia a dia.
+              <p className="text-wizard-parchment/60 text-sm leading-relaxed max-w-xs mx-auto md:mx-0">
+                Uma experiência gastronômica única, trazendo o encanto do mundo bruxo para o seu dia a dia. Prepare sua varinha e seu apetite.
               </p>
               <div className="flex justify-center md:justify-start gap-4">
-                <a href="#" className="w-10 h-10 rounded-full border border-wizard-gold/30 flex items-center justify-center hover:bg-wizard-gold hover:text-wizard-deep transition-all">
-                  <Instagram size={20} />
+                <a href="#" className="w-12 h-12 rounded-full border border-wizard-gold/30 flex items-center justify-center hover:bg-wizard-gold hover:text-wizard-deep transition-all duration-300">
+                  <Instagram size={22} />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full border border-wizard-gold/30 flex items-center justify-center hover:bg-wizard-gold hover:text-wizard-deep transition-all">
-                  <Facebook size={20} />
+                <a href="#" className="w-12 h-12 rounded-full border border-wizard-gold/30 flex items-center justify-center hover:bg-wizard-gold hover:text-wizard-deep transition-all duration-300">
+                  <Facebook size={22} />
                 </a>
               </div>
             </div>
 
             {/* Hours */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-center md:justify-start gap-2 text-wizard-gold font-magic text-xl">
+            <div className="space-y-6">
+              <div className="flex items-center justify-center md:justify-start gap-3 text-wizard-gold font-magic text-xl">
                 <Clock size={24} />
                 <h4>Horário de Magia</h4>
               </div>
-              <ul className="space-y-2 text-sm text-wizard-parchment/80">
-                <li className="flex justify-between md:justify-start md:gap-8 border-b border-white/10 pb-1">
+              <ul className="space-y-3 text-sm text-wizard-parchment/80 font-body">
+                <li className="flex justify-between md:justify-start md:gap-12 border-b border-white/5 pb-2">
                   <span>Segunda - Sexta</span>
                   <span>08:00 - 20:00</span>
                 </li>
-                <li className="flex justify-between md:justify-start md:gap-8 border-b border-white/10 pb-1">
+                <li className="flex justify-between md:justify-start md:gap-12 border-b border-white/5 pb-2">
                   <span>Sábado</span>
                   <span>09:00 - 22:00</span>
                 </li>
-                <li className="flex justify-between md:justify-start md:gap-8 border-b border-white/10 pb-1">
+                <li className="flex justify-between md:justify-start md:gap-12 border-b border-white/5 pb-2">
                   <span>Domingo</span>
                   <span>14:00 - 20:00</span>
                 </li>
@@ -436,25 +499,24 @@ export default function App() {
             </div>
 
             {/* Location */}
-            <div className="space-y-4">
-               <div className="flex items-center justify-center md:justify-start gap-2 text-wizard-gold font-magic text-xl">
+            <div className="space-y-6">
+               <div className="flex items-center justify-center md:justify-start gap-3 text-wizard-gold font-magic text-xl">
                 <MapPin size={24} />
                 <h4>Localização</h4>
               </div>
-              <p className="text-wizard-parchment/80">
+              <p className="text-wizard-parchment/80 leading-relaxed font-body">
                 Beco Diagonal, nº 93/4<br/>
                 (Ou Centro da Cidade)<br/>
                 São Paulo - SP
               </p>
-              <button className="mt-4 px-6 py-2 border border-wizard-gold/50 rounded hover:bg-wizard-gold hover:text-wizard-deep transition-colors text-sm">
+              <button className="mt-4 px-8 py-3 border border-wizard-gold/50 rounded hover:bg-wizard-gold hover:text-wizard-deep transition-all font-magic text-xs uppercase tracking-widest">
                 Ver no Mapa do Maroto
               </button>
             </div>
           </div>
 
-          <div className="mt-16 pt-8 border-t border-white/10 text-center text-xs text-wizard-parchment/40">
-            <p>&copy; {new Date().getFullYear()} Ollivander Café. Todos os direitos reservados.</p>
-            <p className="mt-2">Site meramente ilustrativo. Imagens de Pexels/Unsplash.</p>
+          <div className="mt-20 pt-8 border-t border-white/10 text-center text-xs text-wizard-parchment/30 font-magic">
+            <p>&copy; {new Date().getFullYear()} Ollivander Café. Todos os direitos reservados. Feito com magia.</p>
           </div>
         </div>
       </footer>
@@ -462,7 +524,7 @@ export default function App() {
       {/* Floating Action Button (Mobile) */}
       <a 
         href="#menu"
-        className={`md:hidden fixed bottom-6 right-6 bg-wizard-gold text-wizard-deep p-4 rounded-full shadow-lg z-50 transition-transform duration-300 ${scrolled ? 'scale-100' : 'scale-0'}`}
+        className={`md:hidden fixed bottom-6 right-6 bg-wizard-gold text-wizard-deep p-4 rounded-full shadow-[0_0_20px_rgba(212,175,55,0.5)] z-50 transition-transform duration-300 hover:scale-110 active:scale-95 ${scrolled ? 'scale-100' : 'scale-0'}`}
       >
         <Menu size={24} />
       </a>
