@@ -23,8 +23,7 @@ export const Footer = () => {
               <h4 style={styles.title}>Horário de Magia</h4>
             </div>
             <ul style={styles.list}>
-              <li style={styles.listItem}><span>Segunda - Sexta</span><span>08:00 - 20:00</span></li>
-              <li style={styles.listItem}><span>Sábado</span><span>09:00 - 22:00</span></li>
+              <li style={styles.listItem}><span>Aberto todos os dias</span><span>10:00 - 22:00</span></li>
             </ul>
           </div>
           
@@ -34,12 +33,12 @@ export const Footer = () => {
                <MapPin size={28} />
                <h4 style={styles.title}>Localização</h4>
              </div>
-            <p style={{...styles.text, fontSize: '1.1rem'}}>Beco Diagonal, nº 93/4<br/>São Paulo - SP</p>
+            <p style={{...styles.text, fontSize: '1.1rem'}}>Rua Capitão João Crisóstomo, Qd 10, Lt 05, Centro<br/>Caldas Novas -</p>
           </div>
         </div>
         
         <div style={styles.copyright}>
-          <p>&copy; {new Date().getFullYear()} Ollivander Café. Todos os direitos reservados. Feito com magia.</p>
+          <p>&copy; {new Date().getFullYear()} Ollivander Bistrô & Café. Todos os direitos reservados. Feito com magia.</p>
         </div>
       </div>
     </footer>
