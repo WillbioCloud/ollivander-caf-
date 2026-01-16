@@ -14,7 +14,7 @@ export const Footer = () => {
             <img src="/logo.png" alt="Ollivander Café" style={styles.logo} />
             <p style={styles.text}>Uma experiência gastronômica única, trazendo o encanto e a magia para o seu dia a dia.</p>
             <div style={styles.socials}>
-              <a href="#" style={styles.socialIcon}><Instagram size={22} /></a>
+              <a href="https://www.instagram.com/ollivandercafe/" style={styles.socialIcon}><Instagram size={22} /></a>
               <a href="#" style={styles.socialIcon}><Facebook size={22} /></a>
             </div>
           </div>
