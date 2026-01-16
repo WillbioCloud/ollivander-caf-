@@ -28,3 +28,19 @@ body {
   font-family: var(--font-body);
   overflow-x: hidden;
 }
+
+/* Efeito para o card do mapa no footer */
+footer a[href*="maps"] {
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+footer a[href*="maps"]:hover img {
+  transform: scale(1.1);
+  filter: sepia(0%) brightness(1.1);
+}
+
+footer a[href*="maps"]:hover div {
+  opacity: 1 !important; /* Força o overlay a aparecer */
+}

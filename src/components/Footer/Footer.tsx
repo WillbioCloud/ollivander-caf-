@@ -2,6 +2,9 @@ import React from 'react';
 import { Instagram, Facebook, Clock, MapPin } from 'lucide-react';
 
 export const Footer = () => {
+  // Link direto para a busca no Maps
+  const mapLink = "https://www.google.com/maps/search/?api=1&query=Ollivander+Bistrô+e+Café+Caldas+Novas";
+
   return (
     <footer id="contact" style={styles.footer}>
       <div style={styles.container}>
@@ -27,13 +30,31 @@ export const Footer = () => {
             </ul>
           </div>
           
-          {/* Coluna 3: Local */}
+          {/* Coluna 3: Localização */}
           <div style={styles.col}>
              <div style={styles.titleWrapper}>
                <MapPin size={28} />
                <h4 style={styles.title}>Localização</h4>
              </div>
-            <p style={{...styles.text, fontSize: '1.1rem'}}>Rua Capitão João Crisóstomo, Qd 10, Lt 05, Centro<br/>Caldas Novas -</p>
+            <p style={{...styles.text, fontSize: '1.1rem'}}>
+              Rua Capitão João Crisóstomo, Qd 10, Lt 05, Centro<br/>Caldas Novas - GO
+            </p>
+
+            {/* IMAGEM COMO BOTÃO (Limpa e Direta) */}
+            <a 
+              href={mapLink} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={styles.mapLink}
+              title="Clique para traçar a rota"
+            >
+              <img 
+                src="/map.png" 
+                alt="Abrir mapa" 
+                style={styles.mapImage} 
+              />
+            </a>
+            
           </div>
         </div>
         
@@ -79,5 +100,23 @@ const styles: { [key: string]: React.CSSProperties } = {
   copyright: {
     textAlign: 'center', fontSize: '0.75rem', opacity: 0.4, marginTop: '5rem',
     paddingTop: '2rem', fontFamily: 'var(--font-magic)', borderTop: '1px solid rgba(255,255,255,0.1)'
+  },
+  
+  // --- ESTILO SIMPLIFICADO DO MAPA ---
+  mapLink: {
+    display: 'inline-block', // Remove comportamento de bloco cheio
+    marginTop: '1rem',
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease',
+    // Sem bordas, sem background
+  },
+  mapImage: {
+    width: '100%',
+    maxWidth: '280px', // Limita o tamanho para não ficar gigante
+    height: 'auto',
+    borderRadius: '12px', // Apenas arredonda a imagem
+    display: 'block',
+    // Sombra suave apenas para separar do fundo escuro
+    boxShadow: '0 4px 10px rgba(0,0,0,0.3)', 
   }
 };

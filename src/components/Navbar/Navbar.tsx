@@ -144,7 +144,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center', 
     alignItems: 'center',
     position: 'relative', 
-    minHeight: '60px'
+    minHeight: '60px',
   },
   logoWrapper: {
     position: 'absolute',

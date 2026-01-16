@@ -33,7 +33,7 @@ export const Menu = () => {
           viewport={{ once: true }}
           style={styles.header}
         >
-          <h2 style={styles.title}>Cardápio Oficial</h2>
+          <h2 style={styles.title}>Cardapio Oficial</h2>
           <div style={styles.divider}>
             <span style={styles.line}></span>
             <Scroll size={32} />
@@ -157,7 +157,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   header: { textAlign: 'center', marginBottom: '3rem' },
   title: {
-    fontSize: '4rem', fontWeight: 'bold', color: 'var(--color-wizard-green)',
+    fontFamily: "'HarryP', cursive",fontSize: '4rem', fontWeight: 'bold', color: 'var(--color-wizard-green)',
     marginBottom: '1rem', textShadow: '0 2px 0px rgba(255,255,255,0.1)'
   },
   divider: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', color: 'rgba(62, 39, 35, 0.6)' },
