@@ -6,6 +6,8 @@ import { About } from './components/About/About';
 import { Highlights } from './components/Highlights/Highlights';
 import { Menu } from './components/Menu/Menu';
 import { Footer } from './components/Footer/Footer';
+// 1. Importe o Pomo
+import { GoldenSnitch } from './components/GoldenSnitch/GoldenSnitch';
 import './index.css';
 
 export default function App() {
@@ -19,6 +21,9 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* 2. Adicione o componente aqui no topo */}
+      <GoldenSnitch />
+
       <Navbar />
       
       <main>
