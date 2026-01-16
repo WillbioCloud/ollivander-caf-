@@ -15,12 +15,12 @@ export const MenuCard: React.FC<Props> = ({ item, onClick }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ type: "spring", stiffness: 40, damping: 15 }}
-      whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(212, 175, 55, 0.25)" }}
+      whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}
       onClick={onClick}
       style={{
         ...styles.card,
-        border: item.highlight ? '2px solid var(--color-wizard-gold)' : '1px solid rgba(62, 39, 35, 0.1)',
-        boxShadow: item.highlight ? '0 0 15px rgba(212, 175, 55, 0.2)' : '0 4px 6px rgba(0,0,0,0.1)'
+        // Se for destaque, borda dourada. Se não, borda sutil.
+        border: item.highlight ? '2px solid var(--color-wizard-gold)' : '1px solid rgba(212, 175, 55, 0.3)',
       }}
     >
       {item.highlight && (
@@ -39,6 +39,11 @@ export const MenuCard: React.FC<Props> = ({ item, onClick }) => {
       {item.description && (
         <p style={styles.desc}>{item.description}</p>
       )}
+      
+      {/* Botão sutil "Ver mais" para incentivar o clique */}
+      <div style={styles.footer}>
+        <span style={styles.moreDetails}>Toque para detalhes</span>
+      </div>
     </motion.div>
   );
 };
@@ -46,14 +51,17 @@ export const MenuCard: React.FC<Props> = ({ item, onClick }) => {
 const styles: { [key: string]: React.CSSProperties } = {
   card: {
     position: 'relative',
-    backgroundColor: '#fcf5e5',
-    backgroundImage: "url('https://www.transparenttextures.com/patterns/aged-paper.png')",
+    // MUDANÇA PRINCIPAL: Fundo branco semi-transparente para contrastar com o fundo bege do site
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    backdropFilter: 'blur(5px)', // Efeito moderno
     padding: '1.5rem',
-    borderRadius: '8px',
+    borderRadius: '12px',
     cursor: 'pointer',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.05)', // Sombra inicial leve
+    transition: 'border-color 0.3s ease',
   },
   starBadge: {
     position: 'absolute', top: '-10px', right: '-10px',
@@ -62,15 +70,30 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   header: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-    borderBottom: '1px solid rgba(62, 39, 35, 0.15)', paddingBottom: '0.8rem', marginBottom: '0.8rem'
+    borderBottom: '1px dashed rgba(62, 39, 35, 0.2)', // Linha pontilhada mais leve
+    paddingBottom: '0.8rem', marginBottom: '0.8rem',
+    gap: '1rem'
   },
   title: {
-    fontFamily: 'var(--font-magic)', fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-wizard-brown)'
+    fontFamily: 'var(--font-magic)', fontSize: '1.3rem', fontWeight: 'bold', 
+    color: '#2c1810', lineHeight: 1.2
   },
   price: {
-    fontWeight: 'bold', color: 'var(--color-wizard-green)', fontSize: '1.1rem', marginLeft: '1rem', whiteSpace: 'nowrap'
+    fontWeight: 'bold', color: 'var(--color-wizard-green)', 
+    fontSize: '1.1rem', whiteSpace: 'nowrap',
+    backgroundColor: 'rgba(26, 71, 42, 0.1)', padding: '2px 8px', borderRadius: '4px'
   },
   desc: {
-    fontFamily: 'var(--font-body)', fontSize: '0.9rem', fontStyle: 'italic', opacity: 0.8, color: 'var(--color-wizard-brown)'
+    fontFamily: 'var(--font-body)', fontSize: '0.95rem', 
+    fontStyle: 'italic', opacity: 0.85, color: '#4a3b32',
+    lineHeight: 1.5, marginBottom: '1rem'
+  },
+  footer: {
+    marginTop: 'auto',
+    textAlign: 'right'
+  },
+  moreDetails: {
+    fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px',
+    color: 'var(--color-wizard-gold)', fontWeight: 'bold'
   }
 };
