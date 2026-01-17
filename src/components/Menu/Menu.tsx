@@ -146,14 +146,26 @@ export const Menu = () => {
 
 const styles: { [key: string]: React.CSSProperties } = {
   section: {
-    padding: '8rem 0',
-    backgroundColor: 'var(--color-wizard-parchment)',
-    backgroundImage: "url('https://www.transparenttextures.com/patterns/aged-paper.png')",
-    color: 'var(--color-wizard-dark)',
+    backgroundColor: 'var(--color-wizard-deep)', // Cor de segurança caso a imagem não carregue
+    padding: '5rem 0',
     position: 'relative',
+    
+    // --- SUA IMAGEM PRÓPRIA ---
+    // Nota: Adicionei um "linear-gradient" escuro por cima da imagem
+    // para garantir que ela não fique clara demais e atrapalhe a leitura dos cards.
+    backgroundImage: `
+      linear-gradient(rgba(114, 110, 75, 0.47), rgba(15, 16, 20, 0.24)),
+      url('/fundo-queimado.png')
+    `,
+    backgroundSize: 'cover', // Tenta cobrir toda a área sem repetir
+    backgroundPosition: 'center',
+    // backgroundAttachment: 'fixed', // Fica legal para imagens grandes
   },
   container: {
-    maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', width: '100%'
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '0 1.5rem',
+    position: 'relative', zIndex: 2
   },
   header: { textAlign: 'center', marginBottom: '3rem' },
   title: {
