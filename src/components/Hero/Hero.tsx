@@ -62,7 +62,7 @@ export const Hero = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          “Onde cada sabor escolhe você”
+          “Do caldeirão para a xícara: café com magia de Hogwarts.”
         </motion.p>
         
         <motion.div
