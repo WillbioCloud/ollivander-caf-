@@ -4,7 +4,7 @@ import { Instagram, MessageCircle, Clock, MapPin, Phone, ExternalLink } from 'lu
 export const Footer = () => {
   // Gera o link de busca exato para o Google Maps
   const addressQuery = encodeURIComponent("R. Cap. João Crisóstomo, qd 10 - lt 05 - Centro, Caldas Novas - GO, 75680-029");
-  const mapLink = `https://www.google.com/maps/search/?api=1&query=${addressQuery}`;
+  const mapLink = 'https://maps.app.goo.gl/zsm4wQWpsXE6GbUP7';
   
   // Link do WhatsApp
   const whatsappLink = "https://web.whatsapp.com/send/?phone=5564992094814&text=Ol%C3%A1%2C+conheci+voc%C3%AAs+pelo+Instagram.+Quero+saber+mais+informa%C3%A7%C3%B5es."; 

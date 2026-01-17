@@ -98,8 +98,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     filter: 'drop-shadow(0 4px 4px rgba(0,0,0,0.5))'
   },
   logo: {
-    width: '280px',
-    maxWidth: '80vw',
+    width: '400px',
+    maxWidth: '50vw',
     marginBottom: '1.5rem',
     filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))',
     willChange: 'transform, opacity', // Otimização para animação
