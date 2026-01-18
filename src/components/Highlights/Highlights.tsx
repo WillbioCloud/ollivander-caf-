@@ -1,11 +1,107 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FlaskConical, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { motion, useInView } from 'framer-motion'; // Adicionado useInView
+import { FlaskConical } from 'lucide-react';
 import { ParallaxSection } from '../ParallaxSection/ParallaxSection';
-import { MENU_ITEMS } from '../../constants'; // Ajuste o caminho se necessário
-import { MenuItem } from '../../types'; // Ajuste o caminho
-import { ItemModal } from '../Menu/ItemModal'; // Vamos criar esse arquivo já já
+import { MENU_ITEMS } from '../../constants';
+import { MenuItem } from '../../types';
+import { ItemModal } from '../Menu/ItemModal';
 
+// --- SUB-COMPONENTE PARA A IMAGEM MÁGICA ---
+const MagicCardImage = ({ src, alt }: { src?: string, alt: string }) => {
+  const [revealed, setRevealed] = useState(false);
+  
+  // 1. Criamos uma referência para este componente
+  const ref = useRef(null);
+  
+  // 2. O hook useInView vigia essa referência. 
+  // 'once: true' garante que a animação só roda na primeira vez que aparecer.
+  // 'margin: "-50px"' faz disparar só quando o elemento já estiver um pouco dentro da tela.
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  useEffect(() => {
+    // 3. Só iniciamos o timer SE o componente estiver visível (isInView)
+    if (isInView) {
+      const timer = setTimeout(() => setRevealed(true), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isInView]); // O efeito roda quando isInView mudar para true
+
+  // Gera partículas fixas (memoizadas)
+  const particles = useMemo(() => {
+    return Array.from({ length: 30 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 1,
+      duration: Math.random() * 1 + 1,
+      size: Math.random() * 3 + 1
+    }));
+  }, []);
+
+  return (
+    // Conectamos a ref ao container principal
+    <div ref={ref} style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+      
+      {/* 1. PARTICULAS (Só aparecem se ainda não revelou e se já estiver visível na tela) */}
+      {!revealed && isInView && (
+        <div style={{ position: 'absolute', inset: 0 }}>
+          {particles.map((p) => (
+            <motion.div
+              key={p.id}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ 
+                opacity: [0, 1, 0],
+                scale: [0, 1.5, 0],
+                y: -20 
+              }}
+              transition={{ 
+                duration: p.duration, 
+                delay: p.delay,
+                repeat: Infinity 
+              }}
+              style={{
+                position: 'absolute',
+                left: `${p.left}%`,
+                top: `${p.top}%`,
+                width: p.size,
+                height: p.size,
+                backgroundColor: Math.random() > 0.6 ? 'var(--color-wizard-gold)' : '#fff',
+                borderRadius: '50%',
+                boxShadow: '0 0 5px rgba(255,255,255,0.8)'
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* 2. A IMAGEM REAL */}
+      <motion.img
+        src={src || "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1000&auto=format&fit=crop"} 
+        alt={alt}
+        initial={{ opacity: 0, filter: 'blur(8px) grayscale(100%)' }}
+        // A animação agora depende explicitamente do estado 'revealed'
+        animate={{ 
+          opacity: revealed ? 1 : 0, 
+          filter: revealed ? 'blur(0px) grayscale(0%)' : 'blur(5px) grayscale(50%)' 
+        }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+        style={{ 
+          width: '100%', 
+          height: '100%', 
+          objectFit: 'cover',
+          transform: 'scale(1.1)'
+        }}
+      />
+      
+      <div style={{ 
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%',
+        background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)' 
+      }} />
+    </div>
+  );
+};
+
+// --- COMPONENTE PRINCIPAL (O restante permanece igual, apenas reexportando) ---
 export const Highlights = () => {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const featuredItems = MENU_ITEMS.filter(item => item.highlight === true);
@@ -38,18 +134,21 @@ export const Highlights = () => {
                 key={item.id}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: index * 0.15, type: 'spring' }}
                 onClick={() => setSelectedItem(item)}
                 style={styles.card}
-                whileHover={{ y: -12, borderColor: 'var(--color-wizard-gold)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
+                whileHover={{ 
+                  y: -12, 
+                  borderColor: 'var(--color-wizard-gold)', 
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.5)' 
+                }}
               >
                 <div style={styles.cardImageContainer}>
-                  <div style={styles.sparkleIcon}>
-                    <Sparkles size={64} strokeWidth={1} />
-                  </div>
                   <div style={styles.badge}>Recomendado</div>
+                  <MagicCardImage src={item.image} alt={item.name} />
                 </div>
+
                 <div style={{ padding: '1.5rem' }}>
                   <h3 style={styles.cardTitle}>{item.name}</h3>
                   <div style={styles.separator}></div>
@@ -65,7 +164,6 @@ export const Highlights = () => {
         </div>
       </ParallaxSection>
 
-      {/* Modal Reutilizável */}
       {selectedItem && <ItemModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
     </>
   );
@@ -100,20 +198,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: '1px solid rgba(212, 175, 55, 0.3)', 
     borderRadius: '1rem', 
     overflow: 'hidden', 
-    cursor: 'pointer'
+    cursor: 'pointer',
+    transition: 'transform 0.3s ease'
   },
   cardImageContainer: {
     height: '14rem',
     position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(10, 10, 12, 0.3)',
-  },
-  sparkleIcon: {
-    transform: 'scale(1.5)',
-    color: 'rgba(212, 175, 55, 0.8)',
-    filter: 'drop-shadow(0 0 10px rgba(212,175,55,0.4))'
+    backgroundColor: 'rgba(10, 10, 12, 0.5)',
+    overflow: 'hidden'
   },
   badge: {
     position: 'absolute',
@@ -126,7 +218,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '0.3rem 0.8rem',
     borderRadius: '4px',
     fontFamily: 'var(--font-magic)',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
+    boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+    zIndex: 20
   },
   cardTitle: {
     fontFamily: 'var(--font-magic)',
