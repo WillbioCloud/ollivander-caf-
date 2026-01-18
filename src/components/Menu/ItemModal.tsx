@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, FlaskConical } from 'lucide-react';
 import { MenuItem } from '../../types';
 
@@ -9,7 +9,63 @@ interface Props {
 }
 
 export const ItemModal: React.FC<Props> = ({ item, onClose }) => {
+  const [stage, setStage] = useState<'idle' | 'shaking' | 'expanding' | 'revealing' | 'done'>('idle');
+
+  useEffect(() => {
+    if (!item) return;
+    
+    // Sequência de animação automática
+    const t1 = setTimeout(() => setStage('shaking'), 400);   // Treme
+    const t2 = setTimeout(() => setStage('expanding'), 1100); // Expande
+    const t3 = setTimeout(() => setStage('revealing'), 1600); // Partículas + Imagem
+    const t4 = setTimeout(() => setStage('done'), 3500);      // Finaliza
+
+    return () => {
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
+      setStage('idle');
+    };
+  }, [item]);
+
   if (!item) return null;
+
+  // Gerador de Partículas de Alta Densidade (100 partículas)
+  const renderParticles = () => {
+    const particles = [];
+    const particleCount = 100; // Quantidade alta para o efeito denso
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ 
+            opacity: [0, 1, 0], // Pisca
+            scale: [0, Math.random() * 2 + 1, 0], // Cresce e some
+            x: (Math.random() - 0.5) * 20, // Pequeno movimento lateral
+            y: (Math.random() - 0.5) * 20  // Pequeno movimento vertical
+          }}
+          transition={{ 
+            duration: Math.random() * 1 + 0.5, // Duração aleatória
+            delay: Math.random() * 1.5, // Atraso espalhado para criar o efeito "pouco a pouco"
+            repeat: 0
+          }}
+          style={{
+            position: 'absolute',
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: Math.random() * 4 + 2 + 'px', // Tamanhos variados (2px a 6px)
+            height: Math.random() * 4 + 2 + 'px',
+            backgroundColor: Math.random() > 0.7 ? '#D4AF37' : '#fff', // Ouro e Branco
+            borderRadius: '50%',
+            boxShadow: '0 0 4px rgba(255,255,255,0.8)',
+            zIndex: 10,
+            pointerEvents: 'none'
+          }}
+        />
+      );
+    }
+    return particles;
+  };
 
   return (
     <div style={styles.overlay} onClick={onClose}>
@@ -26,9 +82,70 @@ export const ItemModal: React.FC<Props> = ({ item, onClose }) => {
         </button>
 
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-           <div style={styles.iconWrapper}>
-            <Sparkles style={{ color: 'var(--color-wizard-green)' }} size={36} />
+           
+           {/* ÁREA DA ANIMAÇÃO MÁGICA */}
+           {/* Substituímos a div estática do iconWrapper por este motion.div */}
+           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+             <motion.div
+               layout
+               initial={{ width: 60, height: 60, borderRadius: '50%', backgroundColor: 'rgba(26, 71, 42, 0.15)' }}
+               animate={{ 
+                 width: stage === 'idle' || stage === 'shaking' ? 60 : '100%',
+                 height: stage === 'idle' || stage === 'shaking' ? 60 : 250, // Altura da imagem expandida
+                 borderRadius: stage === 'idle' || stage === 'shaking' ? '50%' : '12px',
+                 backgroundColor: stage === 'idle' || stage === 'shaking' ? 'rgba(26, 71, 42, 0.15)' : '#000'
+               }}
+               transition={{ type: "spring", stiffness: 80, damping: 15 }}
+               style={{ 
+                 position: 'relative', 
+                 display: 'flex', 
+                 alignItems: 'center', 
+                 justifyContent: 'center',
+                 overflow: 'hidden',
+                 // Mantendo estilo original do iconWrapper
+                 padding: stage === 'expanding' || stage === 'revealing' || stage === 'done' ? 0 : '0.75rem'
+               }}
+             >
+                {/* 1. O ÍCONE ORIGINAL (Treme e some) */}
+                <AnimatePresence>
+                  {(stage === 'idle' || stage === 'shaking') && (
+                    <motion.div
+                      animate={stage === 'shaking' ? {
+                        rotate: [0, -20, 20, -20, 20, 0],
+                        scale: [1, 1.1, 1.1, 1.1, 1]
+                      } : {}}
+                      exit={{ opacity: 0, scale: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Sparkles style={{ color: 'var(--color-wizard-green)' }} size={36} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* 2. AS PARTÍCULAS (Formam a imagem) */}
+                {(stage === 'revealing') && (
+                  <div style={{ position: 'absolute', inset: 0 }}>
+                    {renderParticles()}
+                  </div>
+                )}
+
+                {/* 3. A IMAGEM (Aparece suavemente por trás das partículas) */}
+                {(stage === 'revealing' || stage === 'done') && (
+                  <motion.img
+                    src={item.image || "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1000&auto=format&fit=crop"}
+                    alt={item.name}
+                    initial={{ opacity: 0, filter: 'blur(8px) grayscale(100%)' }}
+                    animate={{ 
+                      opacity: 1, 
+                      filter: stage === 'done' ? 'blur(0px) grayscale(0%)' : 'blur(4px) grayscale(20%)'
+                    }}
+                    transition={{ duration: 2, ease: "easeInOut" }} // Fade in lento acompanhando as partículas
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                )}
+             </motion.div>
            </div>
+
            <h2 style={styles.title}>{item.name}</h2>
            <span style={styles.priceTag}>
              R$ {item.price.toFixed(2).replace('.', ',')}
@@ -84,10 +201,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     position: 'absolute', top: '1rem', right: '1rem',
     color: 'var(--color-wizard-brown)', cursor: 'pointer', background: 'none', border: 'none'
   },
-  iconWrapper: {
-    display: 'inline-block', padding: '0.75rem', borderRadius: '50%',
-    marginBottom: '1rem', backgroundColor: 'rgba(26, 71, 42, 0.15)'
-  },
+  // O estilo iconWrapper original foi removido daqui pois agora é inline no motion.div para permitir animação
   title: {
     fontFamily: 'var(--font-magic)', fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '0.5rem'
   },
